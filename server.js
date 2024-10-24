@@ -5,7 +5,9 @@ const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
 const hbs = require("hbs");
 const path = require("path");
-hbs.registerPartials(__dirname + '/views/partials', function (err) { console.log(err)});
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcrypt');
+
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -16,11 +18,11 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
-//Routes for user registeration and authentication
-// app.use("/api/register",require("./routes/userRoutes"));
-
 
 app.use(errorHandler);
+
+app.use('/api/register', require("./routes/userRoutes"));
+
 
 // ERROR handling middleware
 app.use(errorHandler);
@@ -36,9 +38,9 @@ app.get('/',(req,res)=>{
 app.get("/home",(req,res)=>{
     res.render("home",{
         users: [
-            { username: "Gurnimrat Singh", date: "23-10-2024", subject: "Maths" },
-            { username: "Raghav Nag", date: "23-10-2024", subject: "Science" },
-            { username: "Guntas Singh", date: "23-10-2024", subject: "History" }
+            { username: "Parth", date: "23-10-2024", subject: "Maths" },
+            { username: "Aarav", date: "23-10-2024", subject: "Science" },
+            { username: "Ishita", date: "23-10-2024", subject: "History" }
         ]
     })
 })
@@ -47,14 +49,14 @@ app.get("/home",(req,res)=>{
 app.get("/allusers",(req,res)=>{
     res.render("users",{
         users: [
-            { username: "Gurnimrat Singh", date: "23-10-2024", subject: "Maths" },
-            { username: "Raghav Nagi", date: "23-10-2024", subject: "Science" },
-            { username: "Guntas Singh", date: "23-10-2024", subject: "History" }
+            { username: "Parth", date: "23-10-2024", subject: "Maths" },
+            { username: "Aarav", date: "23-10-2024", subject: "Science" },
+            { username: "Ishita", date: "23-10-2024", subject: "History" }
         ]
     })
 })
 
-
+hbs.registerPartials(path.join(__dirname, '/views/partials'));
 
 // APP CONFIG START
 app.listen(port, () =>{
