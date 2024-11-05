@@ -29,5 +29,11 @@
     {{> headers}} <!-- Use the registered partial -->
     <h2>Welcome to the Home Page</h2>
     <p>This is the homepage content.</p>
+    <div>
+        <form action="/profile" method="post" enctype="multipart/form-data">
+        <input type="file" name="avatar"/>
+        <button type="submit">Submit</button>
+        </form>       
+    </div>
 </body>
 </html>
