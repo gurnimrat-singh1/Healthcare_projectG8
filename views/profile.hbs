@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    {{#if image}}
+        <h2>Uploaded Image:</h2>
+        <img src="{{image}}" alt="Uploaded Image" style="max-width: 500px;">
+    {{else}}
+        <p>No image uploaded.</p>
+    {{/if}}
+
+    <a href="/home">Go back to home</a>
+</body>
+</html>

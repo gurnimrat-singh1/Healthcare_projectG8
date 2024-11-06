@@ -9,8 +9,8 @@ const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcrypt');
 const doctorRoutes = require("./routes/doctorRoutes");
 const multer=require('multer');
-const upload=multer({dest:'uploads/'});
-
+const uploads=multer({dest:'uploads/'});
+const Profile = require("./model/Profile");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -47,24 +47,47 @@ app.get("/home",(req,res)=>{
     })
 })
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './uploads')
     },
     filename: function (req, file, cb) {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null, file.fieldname + '-' + uniqueSuffix)
+      const fileExtension = path.extname(file.originalname); // Extract file extension
+      cb(null, file.fieldname + '-' + uniqueSuffix+fileExtension);
     }
   })
   
 //   const upload = multer({ storage: storage })
- const submit = multer({storage : storage});
+ const upload = multer({storage : storage});
 
-app.post('/profile', upload.single('avatar'), function (req, res, next) {
-   console.log(req.body);
-   console.log(req.file);
-   return res.redirect("/home");
-  })
+// app.post('/profile', upload.single('avatar'), function (req, res, next) {
+//    console.log(req.body);
+//    console.log(req.file);
+//    return res.redirect("/home");
+//   })
+
+let  imageUrls = [];
+app.post("/profile", upload.single("avatar"), function(req, res, next) {
+    if (!req.file) {
+        return res.status(400).send("No file uploaded.");
+    }
+    console.log(req.body);
+    console.log(req.file);
+
+    const fileName = req.file.filename;
+    const imageUrl = `/uploads/${fileName}`;
+    imageUrls.push(imageUrl);
+    return res.render("allimages", {
+        imageUrls: imageUrls
+    });
+});
+
+app.get("/allimages", (req, res) => {
+    const imageUrls = []; 
+    res.render("images", { imageUrls: imageUrls }); 
+});
 
 app.get("/allusers",(req,res)=>{
     res.render("users",{
