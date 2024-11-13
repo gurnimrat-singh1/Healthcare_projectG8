@@ -68,4 +68,48 @@ const loginUser = asyncHandler(async (req, res) => {
     });
   });
 
-module.exports = { registerUser, loginUser };
+  // Get the current user's profile
+const getUserProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.id;  // The user ID comes from the JWT token validation middleware
+
+  const user = await User.findById(userId).select("-password"); // Exclude password
+  if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+  }
+
+  res.status(200).json({
+      message: "User profile fetched successfully",
+      user,
+  });
+});
+
+// Update the current user's profile
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.id;  // The user ID comes from the JWT token validation middleware
+  const { firstName, lastName, age, gender, bloodGroup, email, phoneNumber } = req.body;
+
+  const user = await User.findById(userId);
+  if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+  }
+
+  // Update the user's profile
+  user.firstName = firstName || user.firstName;
+  user.lastName = lastName || user.lastName;
+  user.age = age || user.age;
+  user.gender = gender || user.gender;
+  user.bloodGroup = bloodGroup || user.bloodGroup;
+  user.email = email || user.email;
+  user.phoneNumber = phoneNumber || user.phoneNumber;
+
+  await user.save();
+
+  res.status(200).json({
+      message: "User profile updated successfully",
+      user,
+  });
+});
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile };
